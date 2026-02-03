@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ENUMS
+enum SplitType {
+  EQUAL
+  CUSTOM
+  PERCENT
+}
+
+
+// USER
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+
+  groups    Group[]  @relation("UserGroups")
+}
+
+
+// GROUP
+
+model Group {
+  id          String   @id @default(uuid())
+  name        String
+  createdAt   DateTime @default(now())
+
+  createdById String
+  createdBy   User     @relation("UserGroups", fields: [createdById], references: [id])
+
+  participants Participant[]
+  expenses     Expense[]
+
+  @@index([createdById])
+}
+
+
+// PARTICIPANT
+
+model Participant {
+  id        String   @id @default(uuid())
+  name      String
+  color     String?
+  isPrimary Boolean  @default(false) 
+  createdAt DateTime @default(now())
+
+  groupId   String
+  group     Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  paidExpenses Expense[]      @relation("PaidBy")
+  shares       ExpenseShare[]
+}
+
+// EXPENSE
+
+model Expense {
+  id          String   @id @default(uuid())
+  amount      Decimal  @db.Decimal(10,2)
+  description String
+  date        DateTime
+  splitType   SplitType
+  createdAt   DateTime @default(now())
+
+  groupId     String
+  group       Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  payerId     String
+  payer Participant @relation("PaidBy", fields: [payerId], references: [id], onDelete: Cascade)
+
+  shares      ExpenseShare[]
+
+  @@index([groupId])
+  @@index([payerId])
+}
+
+
+// EXPENSE SHARE (BALANCE ENGINE )
+
+model ExpenseShare {
+  id            String   @id @default(uuid())
+  shareAmount   Decimal  @db.Decimal(10,2)
+  percentage    Float?
+
+  expenseId     String
+  expense       Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+
+  participantId String
+  participant Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+
+  @@unique([expenseId, participantId])
+  @@index([participantId])
+}
