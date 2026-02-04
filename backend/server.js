@@ -10,29 +10,22 @@ const authMiddleware = require("./src/modules/auth/auth.middleware");
 
 const app = express();
 
+app.use(helmet());          
+app.use(cors());            
+app.use(morgan("dev"));     
+app.use(express.json());    
 
-// GLOBAL MIDDLEWARE 
-app.use(helmet());          // Security headers
-app.use(cors());            // Allow cross-origin
-app.use(morgan("dev"));     // Logging
-app.use(express.json());    // Parse JSON bodies
-
-
-// Protected Test Route
 app.get("/api/v1/protected", authMiddleware, (req, res) => {
   res.status(200).json({
     message: "Protected route accessed successfully",
-    user: req.user, // injected by middleware
+    user: req.user, 
   });
 });
 
 
-// ROUTES 
-// Auth Routes
-app.use("/api/v1", routes);   // ⭐ ONE CLEAN ENTRY POINT
+app.use("/api/v1", routes); 
 
 
-// HEALTH CHECK ROUTE
 app.get("/api/v1/health", (req, res) => {
   res.status(200).json({
     status: "OK",
@@ -41,7 +34,6 @@ app.get("/api/v1/health", (req, res) => {
 });
 
 
-// GLOBAL ERROR HANDLER 
 app.use((err, req, res, next) => {
   console.error(err);
 
@@ -51,7 +43,6 @@ app.use((err, req, res, next) => {
 });
 
 
-//Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
