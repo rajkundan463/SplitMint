@@ -59,7 +59,10 @@ Returns JWT token for authenticated requests.
 Get Current User  Recommended
 GET /api/v1/auth/me
 Returns logged-in user details.
+
+
 ### Group Routes
+**Body**
 Create Group
 POST /api/v1/groups
 Get User Groups
@@ -72,6 +75,7 @@ Cascade deletes participants, expenses, and shares.
 
 ###  Participant Routes (Nested)
 Participants belong to a group.
+**Body**
 
 Add Participant
 POST /api/v1/groups/:groupId/participants
@@ -83,6 +87,7 @@ DELETE /api/v1/groups/:groupId/participants/:participantId
 
 ### Expense Routes
 Create Expense
+**Body**
 POST /api/v1/expenses
 Supports:
 
@@ -101,6 +106,8 @@ DELETE /api/v1/expenses/:expenseId
 Balances update dynamically.
 
 ###  Search & Filter Expenses
+**Body**
+
 Get Group Expenses
 GET /api/v1/groups/:groupId/expenses
 Query Parameters
@@ -119,6 +126,8 @@ order	asc / desc
 
 ###  Balance & Settlement
 Get Settlement Plan
+**Body**
+
 GET /api/v1/groups/:groupId/settlement
 Features:
 
@@ -129,6 +138,8 @@ Features:
 
 ###  Analytics Dashboard
 Group Financial Overview
+**Body**
+
 GET /api/v1/groups/:groupId/dashboard
 Returns:
 
@@ -167,6 +178,7 @@ B → A
 C → A
 ###  Architecture Highlights
 Modular folder structure
+**Body**
 
 Separation of business logic
 
@@ -179,6 +191,8 @@ Indexed database queries
 Consistent REST patterns
 
 ###  Security Practices
+**Body**
+
 > JWT-based authentication
 > Protected routes
 > Environment-based configuration
@@ -186,11 +200,14 @@ Consistent REST patterns
 > Error handling middleware
 
 ###  Future Enhancements
+**Body**
+
 Settle-Up Payments
 
 Recurring Expenses
 
 ### AI Expense Parsing
+**Body**
 
 Redis Caching
 
@@ -212,6 +229,8 @@ Scalable backend patterns
 This project reflects production-level backend thinking suitable for real-world fintech-style applications.
 
 ###  Running Locally
+**Body**
+
 Install dependencies
 npm install
 Setup environment variables
@@ -222,9 +241,7 @@ JWT_SECRET=your_secret
 Run migrations
 npx prisma migrate dev
 Start server
-npm run dev
-⭐ If You Found This Useful
-Give the repo a star ⭐
+npm run dev or nodemon server
 
 
 
