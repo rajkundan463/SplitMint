@@ -12,5 +12,7 @@ router.delete("/:groupId", authMiddleware, controller.deleteGroup);
 router.post("/:groupId/participants", authMiddleware, controller.addParticipant);
 router.delete("/participants/:participantId", authMiddleware, controller.removeParticipant);
 router.get("/:groupId/summary", authMiddleware, controller.getGroupSummary);
+router.get("/:groupId/participants", authMiddleware, controller.getParticipants);
+
 
 module.exports = router;

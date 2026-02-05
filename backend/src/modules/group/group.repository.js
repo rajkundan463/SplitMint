@@ -63,3 +63,20 @@ exports.getExpensesWithShares = (groupId) => {
         include: { shares: true }
     });
 };
+
+exports.getParticipantsByGroup = (groupId) => {
+    return prisma.participant.findMany({
+        where: { groupId },
+
+        select: {
+            id: true,
+            name: true,
+            color: true,
+            isPrimary: true,
+            createdAt: true
+        },
+
+        orderBy: { createdAt: "asc" }
+    });
+};
+

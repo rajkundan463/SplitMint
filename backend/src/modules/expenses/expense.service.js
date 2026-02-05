@@ -7,9 +7,31 @@ const {
     percentSplit
 } = require("./split.utils");
 
+
+const resolveShares = (data) => {
+
+    const { amount, splitType } = data;
+
+    switch (splitType) {
+
+        case "EQUAL":
+            return equalSplit(amount, data.participants);
+
+        case "CUSTOM":
+            return customSplit(amount, data.splits);
+
+        case "PERCENT":
+            return percentSplit(amount, data.splits);
+
+        default:
+            throw new Error("Invalid split type.");
+    }
+};
+
 exports.createExpense = async (data) => {
 
     return prisma.$transaction(async (tx) => {
+
 
         const expense = await repo.createExpenseTx(tx, {
             amount: data.amount,
@@ -20,18 +42,10 @@ exports.createExpense = async (data) => {
             splitType: data.splitType
         });
 
-        let shares;
+        let shares = resolveShares(data);
 
-        if (data.splitType === "EQUAL") {
-            shares = equalSplit(data.amount, data.participants);
-        }
-
-        if (data.splitType === "CUSTOM") {
-            shares = customSplit(data.amount, data.splits);
-        }
-
-        if (data.splitType === "PERCENT") {
-            shares = percentSplit(data.amount, data.splits);
+        if (!shares?.length) {
+            throw new Error("Failed to generate shares.");
         }
 
         shares = shares.map(s => ({
@@ -45,11 +59,16 @@ exports.createExpense = async (data) => {
     });
 };
 
+
+
 exports.updateExpense = async (expenseId, data) => {
 
     return prisma.$transaction(async (tx) => {
 
+
+
         await repo.deleteSharesTx(tx, expenseId);
+
 
         const expense = await repo.updateExpenseTx(
             tx,
@@ -61,16 +80,11 @@ exports.updateExpense = async (expenseId, data) => {
             }
         );
 
-        let shares;
+        let shares = resolveShares(data);
 
-        if (data.splitType === "EQUAL")
-            shares = equalSplit(data.amount, data.participants);
-
-        if (data.splitType === "CUSTOM")
-            shares = customSplit(data.amount, data.splits);
-
-        if (data.splitType === "PERCENT")
-            shares = percentSplit(data.amount, data.splits);
+        if (!shares?.length) {
+            throw new Error("Failed to generate shares.");
+        }
 
         shares = shares.map(s => ({
             ...s,
@@ -82,6 +96,9 @@ exports.updateExpense = async (expenseId, data) => {
         return expense;
     });
 };
+
+
+
 
 exports.deleteExpense = (expenseId) => {
     return repo.deleteExpense(expenseId);

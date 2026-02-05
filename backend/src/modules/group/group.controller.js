@@ -77,3 +77,26 @@ exports.getGroupSummary = async (req, res, next) => {
         next(err);
     }
 };
+exports.getParticipants = async (req, res, next) => {
+
+    try {
+
+        const { groupId } = req.params;
+
+        const participants =
+            await groupService.getParticipants(groupId);
+
+        res.status(200).json(participants);
+
+    } catch (error) {
+
+        console.error("Get Participants Error:", error);
+
+        res.status(500).json({
+            message: "Failed to fetch participants"
+        });
+    }
+};
+
+
+

@@ -1,14 +1,15 @@
-export default function SettlementList({ settlements = [] }) {
+import { motion } from "framer-motion";
 
-    if (!settlements.length) {
-        return (
+export default function SettlementList({settlements}){
+
+    if(!settlements.length)
+        return(
             <div className="bg-white p-6 rounded-2xl shadow-sm">
                 Everyone is settled 🎉
             </div>
-        );
-    }
+        )
 
-    return (
+    return(
 
         <div className="bg-white p-6 rounded-2xl shadow-sm">
 
@@ -18,25 +19,31 @@ export default function SettlementList({ settlements = [] }) {
 
             <div className="space-y-3">
 
-                {settlements.map((s, i) => (
+                {settlements.map((s,i)=>(
 
-                    <div
+                    <motion.div
                         key={i}
+                        initial={{opacity:0,y:8}}
+                        animate={{opacity:1,y:0}}
                         className="flex justify-between"
                     >
+
                         <span>
-                            <b>{s.from.name}</b> → pays → <b>{s.to.name}</b>
+                            <b>{s.from.name}</b>
+                            {" "}pays{" "}
+                            <b>{s.to.name}</b>
                         </span>
 
                         <span className="font-semibold">
                             ₹ {s.amount}
                         </span>
-                    </div>
+
+                    </motion.div>
 
                 ))}
 
             </div>
 
         </div>
-    );
+    )
 }

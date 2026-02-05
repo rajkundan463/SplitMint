@@ -98,10 +98,17 @@ exports.getGroupDashboard = async (groupId, userParticipantId, filters) => {
         });
     });
 
-   
+
     // YOU OWE / YOU ARE OWED
 
-    const yourBalance = balances[userParticipantId] || 0;
+    if (!balances.hasOwnProperty(userParticipantId)) {
+        throw new Error(
+            "Financial identity mismatch — participant not found in balances"
+        );
+    }
+
+    const yourBalance = balances[userParticipantId];
+
 
     const youOwe = yourBalance < 0
         ? Math.abs(yourBalance)
@@ -129,8 +136,8 @@ exports.getGroupDashboard = async (groupId, userParticipantId, filters) => {
                 amount > 0
                     ? "gets_back"
                     : amount < 0
-                    ? "owes"
-                    : "settled"
+                        ? "owes"
+                        : "settled"
         };
     });
 

@@ -10,17 +10,18 @@ exports.createGroup = async (userId, body) => {
             createdById: userId
         });
 
+
         await repo.createParticipantTx(tx, {
             name: body.primaryName || "You",
             isPrimary: true,
             groupId: group.id,
+            userId: userId, // ⭐ CRITICAL FIX
             color: body.color || "#6366F1"
         });
 
         return group;
     });
 };
-
 
 exports.getUserGroups = (userId) => {
     return repo.getUserGroups(userId);
@@ -95,4 +96,13 @@ exports.getGroupSummary = async (groupId) => {
         totalSpent: total,
         balances
     };
+};
+exports.getParticipantsByGroup = (groupId) => {
+    return prisma.participant.findMany({
+        where: { groupId },
+        orderBy: { createdAt: "asc" }
+    });
+};
+exports.getParticipants = (groupId) => {
+    return repo.getParticipantsByGroup(groupId);
 };
